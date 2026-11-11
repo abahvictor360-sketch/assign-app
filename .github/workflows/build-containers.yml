@@ -4,8 +4,14 @@ name: "Build Containers"
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
       - '*'
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build-containers-common:
@@ -25,8 +31,6 @@ jobs:
         include:
           - runnertags: ubuntu-latest
             arch: amd64
-          - runnertags: ubuntu-24.04-arm
-            arch: arm64
     runs-on: ${{ matrix.runnertags }}
     steps:
       - name: Checkout
@@ -77,8 +81,6 @@ jobs:
           echo "Verifying AMD64 image:"
           docker buildx imagetools inspect ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64
           
-          echo "Verifying ARM64 image:"
-          docker buildx imagetools inspect ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-arm64
           
           # Try to remove any existing manifests first
           docker manifest rm ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }} || true
@@ -86,15 +88,13 @@ jobs:
           
           # Create and push the version-specific manifest
           docker manifest create ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }} \
-            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64 \
-            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-arm64
+            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64
 
           docker manifest push ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}
 
           # Create and push the latest manifest
           docker manifest create ghcr.io/abahvictor360-sketch/assign-app:latest \
-            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64 \
-            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-arm64
+            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64
 
           docker manifest push ghcr.io/abahvictor360-sketch/assign-app:latest
 
