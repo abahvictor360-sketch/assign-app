@@ -90,12 +90,12 @@ export const FirstBillingComponent = () => {
 
   const showYouTube = () => {
     modals.openModal({
-      title: 'Grow Fast With Postiz (Play the video)',
+      title: 'Grow Fast With Assign (Play the video)',
       children: (
         <iframe
           className="h-full aspect-video min-w-[800px]"
           src="https://www.youtube.com/embed/BdsCVvEYgHU?si=vvhaZJ8I5oXXvVJS?autoplay=1"
-          title="Postiz Tutorial"
+          title="Assign Tutorial"
           allow="autoplay"
           allowFullScreen
         />
@@ -137,14 +137,14 @@ export const FirstBillingComponent = () => {
           {t('billing_who_use', 'who use')}{' '}
           {t(
             'billing_postiz_grow_social',
-            'Postiz To Grow Their Social Presence'
+            'Assign To Grow Their Social Presence'
           )}
         </div>
 
         <div className="flex" onClick={showYouTube}>
           <div className="tablet:mb-[32px] cursor-pointer mt-[32px] flex gap-[10px] items-center underline hover:font-[700]">
             <PlatformIcon identifier="youtube" size={20} />
-            <div>See the power of Postiz (click here)</div>
+            <div>See the power of Assign (click here)</div>
           </div>
         </div>
 

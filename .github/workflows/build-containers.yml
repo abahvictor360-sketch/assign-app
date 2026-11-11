@@ -16,7 +16,7 @@ jobs:
       - name: Get Container Version
         id: getcontainerver
         run: |
-          echo "containerver=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          echo "containerver=$(echo "${{ github.ref_name }}" | tr '/' '-')" >> "$GITHUB_OUTPUT"
 
   build-containers:
     needs: build-containers-common
@@ -51,12 +51,12 @@ jobs:
         run: |
           docker buildx build --platform linux/${{ matrix.arch }} \
             -f Dockerfile.dev \
-            -t ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-${{ matrix.arch }} \
+            -t ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-${{ matrix.arch }} \
             --build-arg NEXT_PUBLIC_VERSION=${{ env.NEXT_PUBLIC_VERSION }} \
             --pull \
             --no-cache \
             --provenance=false --sbom=false \
-            --output "type=registry,name=ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-${{ matrix.arch }}" .
+            --output "type=registry,name=ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-${{ matrix.arch }}" .
 
   build-container-manifest:
     needs: [build-containers, build-containers-common]
@@ -75,29 +75,29 @@ jobs:
         run: |
           # Verify the architecture images
           echo "Verifying AMD64 image:"
-          docker buildx imagetools inspect ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-amd64
+          docker buildx imagetools inspect ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64
           
           echo "Verifying ARM64 image:"
-          docker buildx imagetools inspect ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-arm64
+          docker buildx imagetools inspect ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-arm64
           
           # Try to remove any existing manifests first
-          docker manifest rm ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }} || true
-          docker manifest rm ghcr.io/gitroomhq/postiz-app:latest || true
+          docker manifest rm ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }} || true
+          docker manifest rm ghcr.io/abahvictor360-sketch/assign-app:latest || true
           
           # Create and push the version-specific manifest
-          docker manifest create ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }} \
-            --amend ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-amd64 \
-            --amend ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-arm64
+          docker manifest create ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }} \
+            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64 \
+            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-arm64
 
-          docker manifest push ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}
+          docker manifest push ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}
 
           # Create and push the latest manifest
-          docker manifest create ghcr.io/gitroomhq/postiz-app:latest \
-            --amend ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-amd64 \
-            --amend ghcr.io/gitroomhq/postiz-app:${{ env.CONTAINERVER }}-arm64
+          docker manifest create ghcr.io/abahvictor360-sketch/assign-app:latest \
+            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-amd64 \
+            --amend ghcr.io/abahvictor360-sketch/assign-app:${{ env.CONTAINERVER }}-arm64
 
-          docker manifest push ghcr.io/gitroomhq/postiz-app:latest
+          docker manifest push ghcr.io/abahvictor360-sketch/assign-app:latest
 
       - name: Verify Manifest
         run: |
-          docker manifest inspect ghcr.io/gitroomhq/postiz-app:latest
+          docker manifest inspect ghcr.io/abahvictor360-sketch/assign-app:latest

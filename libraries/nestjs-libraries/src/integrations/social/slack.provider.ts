@@ -22,7 +22,7 @@ export class SlackProvider extends SocialAbstract implements SocialProvider {
   name = 'Slack';
   isBetweenSteps = false;
   editor = 'normal' as const;
-  // groups:read is left out on purpose: everyone in the Postiz organization
+  // groups:read is left out on purpose: everyone in the Assign organization
   // sees the same channel picker, and Slack's privacy model forbids showing
   // private channel names to people who aren't members of them.
   scopes = [
